@@ -40,10 +40,6 @@ app = Flask(__name__)
 #################################################
 # Flask Routes
 #################################################
-
-def toDate(dateString): 
-    return datetime.datetime.strptime(dateString, "%Y-%m-%d").date()
-
 @app.route("/")
 def homepage():
     #List all routes
