@@ -129,14 +129,22 @@ def startdata(start):
         date = datetime.datetime.strptime(start, "%Y-%m-%d").date()
     except ValueError:
         date = datetime.datetime.strptime(start, "%y-%m-%d").date()
+
     dateinfo = date - datetime.timedelta(days=365)
-    results = session.query(func.min(Measurement.tobs),func.max(Measurement.tobs),func.avg(Measurement.tobs)).filter(Measurement.date >= dateinfo).first()
-        
+
+    results = session.query(func.min(Measurement.tobs).label("Min"),func.max(Measurement.tobs).label("Max"),func.avg(Measurement.tobs).label("Avg")).filter(Measurement.date >= dateinfo).first()
+    
     session.close()
 
     # Convert list of tuples into normal list
     
-    start_date_data = list(np.ravel(results))
+    #start_date_data = list(np.ravel(results))
+
+    start_date_data = {
+        "Min": results[0],
+        "Max": results[1],
+        "Avg": results[2]
+    }
 
     return jsonify(start_date_data)    
 
@@ -156,14 +164,17 @@ def startenddata(start,end):
 
     startdate = date - datetime.timedelta(days=365)
     enddate = date2 - datetime.timedelta(days=365)
-    results = session.query(func.min(Measurement.tobs),func.max(Measurement.tobs),func.avg(Measurement.tobs)).filter(Measurement.date >= startdate, Measurement.date <= enddate).first()
+    results = session.query(func.min(Measurement.tobs).label("Min"),func.max(Measurement.tobs).label("Max"),func.avg(Measurement.tobs).label("Avg")).filter(Measurement.date >= startdate, Measurement.date <= enddate).first()
         
     session.close()
 
     # Convert list of tuples into normal list
     
-    start_date_data = list(np.ravel(results))
-
+    start_date_data = {
+        "Min": results[0],
+        "Max": results[1],
+        "Avg": results[2]
+    }
     return jsonify(start_date_data)    
 
 if __name__ == '__main__':
