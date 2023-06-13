@@ -9,6 +9,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import create_engine, func
 
 
+
 from flask import Flask, jsonify
 
 
@@ -124,7 +125,10 @@ def startdata(start):
     session = Session(engine)
 
     # Query precipitation
-    date = datetime.datetime.strptime(start, "%y-%m-%d").date()
+    try:
+        date = datetime.datetime.strptime(start, "%Y-%m-%d").date()
+    except ValueError:
+        date = datetime.datetime.strptime(start, "%y-%m-%d").date()
     dateinfo = date - datetime.timedelta(days=365)
     results = session.query(func.min(Measurement.tobs),func.max(Measurement.tobs),func.avg(Measurement.tobs)).filter(Measurement.date >= dateinfo).first()
         
@@ -143,8 +147,13 @@ def startenddata(start,end):
     session = Session(engine)
 
     # Query precipitation 
-    date = datetime.datetime.strptime(start, "%y-%m-%d").date()
-    date2 = datetime.datetime.strptime(end, "%y-%m-%d").date()
+    try:
+        date = datetime.datetime.strptime(start, "%Y-%m-%d").date()
+        date2 = datetime.datetime.strptime(end, "%Y-%m-%d").date()
+    except ValueError:
+        date = datetime.datetime.strptime(start, "%y-%m-%d").date()
+        date2 = datetime.datetime.strptime(end, "%y-%m-%d").date()
+
     startdate = date - datetime.timedelta(days=365)
     enddate = date2 - datetime.timedelta(days=365)
     results = session.query(func.min(Measurement.tobs),func.max(Measurement.tobs),func.avg(Measurement.tobs)).filter(Measurement.date >= startdate, Measurement.date <= enddate).first()
