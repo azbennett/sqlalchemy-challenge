@@ -130,9 +130,7 @@ def startdata(start):
     except ValueError:
         date = datetime.datetime.strptime(start, "%y-%m-%d").date()
 
-    dateinfo = date - datetime.timedelta(days=365)
-
-    results = session.query(func.min(Measurement.tobs).label("Min"),func.max(Measurement.tobs).label("Max"),func.avg(Measurement.tobs).label("Avg")).filter(Measurement.date >= dateinfo).first()
+    results = session.query(func.min(Measurement.tobs).label("Min"),func.max(Measurement.tobs).label("Max"),func.avg(Measurement.tobs).label("Avg")).filter(Measurement.date >= date).first()
     
     session.close()
     
@@ -160,10 +158,8 @@ def startenddata(start,end):
         date = datetime.datetime.strptime(start, "%y-%m-%d").date()
         date2 = datetime.datetime.strptime(end, "%y-%m-%d").date()
 
-    startdate = date - datetime.timedelta(days=365)
-    enddate = date2 - datetime.timedelta(days=365)
-    
-    results = session.query(func.min(Measurement.tobs).label("Min"),func.max(Measurement.tobs).label("Max"),func.avg(Measurement.tobs).label("Avg")).filter(Measurement.date >= startdate, Measurement.date <= enddate).first()
+
+    results = session.query(func.min(Measurement.tobs).label("Min"),func.max(Measurement.tobs).label("Max"),func.avg(Measurement.tobs).label("Avg")).filter(Measurement.date >= date, Measurement.date <= date2).first()
         
     session.close()
     
