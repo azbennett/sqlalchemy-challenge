@@ -124,7 +124,7 @@ def startdata(start):
     # Create our session (link) from Python to the DB
     session = Session(engine)
 
-    # Query precipitation
+    # Query and error checking
     try:
         date = datetime.datetime.strptime(start, "%Y-%m-%d").date()
     except ValueError:
@@ -135,10 +135,8 @@ def startdata(start):
     results = session.query(func.min(Measurement.tobs).label("Min"),func.max(Measurement.tobs).label("Max"),func.avg(Measurement.tobs).label("Avg")).filter(Measurement.date >= dateinfo).first()
     
     session.close()
-
-    # Convert list of tuples into normal list
     
-    #start_date_data = list(np.ravel(results))
+    #Labels the future JSON info
 
     start_date_data = {
         "Min": results[0],
@@ -154,7 +152,7 @@ def startenddata(start,end):
     # Create our session (link) from Python to the DB
     session = Session(engine)
 
-    # Query precipitation 
+    # Query and error checking
     try:
         date = datetime.datetime.strptime(start, "%Y-%m-%d").date()
         date2 = datetime.datetime.strptime(end, "%Y-%m-%d").date()
@@ -164,12 +162,12 @@ def startenddata(start,end):
 
     startdate = date - datetime.timedelta(days=365)
     enddate = date2 - datetime.timedelta(days=365)
+    
     results = session.query(func.min(Measurement.tobs).label("Min"),func.max(Measurement.tobs).label("Max"),func.avg(Measurement.tobs).label("Avg")).filter(Measurement.date >= startdate, Measurement.date <= enddate).first()
         
     session.close()
-
-    # Convert list of tuples into normal list
     
+    #Labels the future JSON info
     start_date_data = {
         "Min": results[0],
         "Max": results[1],
